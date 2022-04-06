@@ -1,17 +1,15 @@
 using AdvantTest.Domain.Interfaces;
-using AdvantTest.Grpc;
+using AdvantTestTask.Grpc;
 using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdvantTest
 {
-    public class EmployeeService : AdvantTest.Grpc.Employees.EmployeesBase
+    public class EmployeeService : Employees.EmployeesBase
     {
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
@@ -34,13 +32,62 @@ namespace AdvantTest
 
         public override async Task<AddEmployeeReply> AddEmployee(EmployeeForCreation request, ServerCallContext context)
         {
-            var createdEmployee = _employeeRepository.Create(_mapper.Map<EmployeeForCreation, Domain.Core.Employee>(request));
+            var creationEmployee = _employeeRepository.Create(_mapper.Map<EmployeeForCreation, Domain.Core.Employee>(request));
             await _employeeRepository.SaveChangesAsync();
-            var savedEmployee = await _employeeRepository.GetById(createdEmployee.Id);
+            var savedEmployee = await _employeeRepository.GetById(creationEmployee.Id);
+
+            if(savedEmployee is null)
+            {
+                return await Task.FromResult(new AddEmployeeReply
+                {
+                    Succeed = false
+                });
+            }
+
+            var createdEmp = _mapper.Map<Domain.Core.Employee,Employee>(savedEmployee);
 
             return await Task.FromResult(new AddEmployeeReply
             {
-                Succeed = savedEmployee != null,
+                Employee = createdEmp,
+                Succeed = true
+            });
+        }
+        public override async Task<DeleteEmployeeReply> DeleteEmployee(DeleteEmployeeRequest request, ServerCallContext context)
+        {
+            var target = await _employeeRepository.GetById(request.Id);
+
+            if (target is null)
+            {
+                return await Task.FromResult(new DeleteEmployeeReply
+                {
+                    Succeed = false,
+                });
+            }
+
+            _employeeRepository.Delete(target);
+            await _employeeRepository.SaveChangesAsync();
+
+            return await Task.FromResult(new DeleteEmployeeReply
+            {
+                Succeed = true,
+            });
+        }
+
+        public async override Task<UpdateEmployeeReply> UpdateEmployee(Employee request, ServerCallContext context)
+        {
+            var employee = await _employeeRepository.GetById(request.Id);
+            employee.FirstName = request.Name;
+            employee.Surname = request.Surname;
+            employee.Patronymic = request.Patronymic;
+            employee.Gender = (Domain.Core.Gender)((int)request.Gender);
+            employee.HasChildren = request.IsHaveChild;
+            employee.BirthDate = request.Birthdate.ToDateTime();
+
+            await _employeeRepository.SaveChangesAsync();
+
+            return await Task.FromResult(new UpdateEmployeeReply
+            {
+                Succeed = true,
             });
         }
     }

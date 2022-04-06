@@ -16,9 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\AdvantTest.Common\Protos\employees.proto">
-      <Link>employees.proto</Link>
-    </Protobuf>
+    <Folder Include="Protos\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="..\AdvantTest.Domain.Interfaces\Protos\employees.proto">
+      <Link>Protos\employees.proto</Link>
+    </Protobuf>
+  </ItemGroup>
 </Project>

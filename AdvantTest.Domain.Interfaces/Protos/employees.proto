@@ -1,7 +1,7 @@
-﻿syntax = "proto3";
+syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-option csharp_namespace = "AdvantTest.Grpc";
+option csharp_namespace = "AdvantTestTask.Grpc";
 
 package EmployeesGrpcPackage;
 
@@ -10,6 +10,11 @@ service Employees {
 	rpc GetEmployees(google.protobuf.Empty) returns (GetEmployeeReply);
 	rpc AddEmployee(EmployeeForCreation) returns (AddEmployeeReply);
 	rpc DeleteEmployee(DeleteEmployeeRequest) returns (DeleteEmployeeReply);
+	rpc UpdateEmployee(Employee) returns (UpdateEmployeeReply);
+}
+
+message UpdateEmployeeReply {
+	bool succeed = 1;
 }
 
 message GetEmployeeReply {
@@ -18,26 +23,29 @@ message GetEmployeeReply {
 
 message AddEmployeeReply {
 	bool succeed = 1;
+	Employee employee = 2;
 }
 
 message DeleteEmployeeRequest {
-	string id = 1;
+	int32 id = 1;
 }
 
 message DeleteEmployeeReply {
 	bool succeed = 1;
 }
 
+enum Gender{
+		none = 0;
+		male = 1;
+		famale = 2;
+}
+
 message Employee {
-	string id = 1;
+	int32 id = 1;
 	string name = 2;
 	string surname = 3;
 	string patronymic = 4;
 	google.protobuf.Timestamp birthdate = 5;
-	enum Gender{
-		male = 0;
-		famale = 1;
-	}
 	Gender gender = 6;
 	bool isHaveChild = 7;
 }
@@ -47,10 +55,6 @@ message EmployeeForCreation {
 	string surname = 2;
 	string patronymic = 3;
 	google.protobuf.Timestamp birthdate = 4;
-	enum Gender{
-		male = 0;
-		famale = 1;
-	}
 	Gender gender = 5;
 	bool isHaveChild = 6;
 }

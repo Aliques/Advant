@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EmployeeService.cs~RF1f85560.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" Version="2.44.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdvantTest.ClientLib\AdvantTest.ClientLib.csproj" />
+    <ProjectReference Include="..\AdvantTest.Domain.Core\AdvantTest.Domain.Core.csproj" />
+    <ProjectReference Include="..\AdvantTest.Infrastructure.Services\AdvantTest.Infrastructure.Services.csproj" />
+  </ItemGroup>
+
+</Project>

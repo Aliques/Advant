@@ -33,7 +33,7 @@ namespace AdvantTest.Domain.Interfaces
         /// Deletes employee by id
         /// </summary>
         /// <param name="id">Employee id</param>
-        void Delete(Employee id);
+        void Delete(Employee employee);
 
         /// <summary>
         /// Gets employee by id

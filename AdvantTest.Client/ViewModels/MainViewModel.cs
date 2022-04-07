@@ -76,7 +76,7 @@ namespace AdvantTest.Client.ViewModels
         private async Task UpdateEmployee()   
         {
             if(SelectedEmployee is null || SelectedEmployee.Id == 0)
-            { return; }
+            { MessageBox.Show("Выберите сотрудника"); return; }
 
             var result = await _employeeServices.Update(SelectedEmployee);
 

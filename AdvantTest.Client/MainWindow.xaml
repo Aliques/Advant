@@ -16,6 +16,8 @@
     <Window.Resources>
         <converters:EnumBooleanConverter x:Key="enumToBoleanConverter" />
         <converters:GrpcDateConverter x:Key="grpcDateConverter" />
+        <converters:GenderConverter x:Key="genderConverter" />
+        <converters:ChildViewConverter x:Key="childViewConverter" />
     </Window.Resources>
     <Grid Grid.IsSharedSizeScope="True">
         <Grid.ColumnDefinitions>
@@ -87,11 +89,11 @@
                             <TextBlock
                                 Grid.Column="4"
                                 Margin="5,0"
-                                Text="{Binding Gender}" />
+                                Text="{Binding Gender, Converter={StaticResource genderConverter}}" />
                             <TextBlock
                                 Grid.Column="5"
                                 Margin="5,0"
-                                Text="{Binding IsHaveChild}" />
+                                Text="{Binding IsHaveChild, Converter={StaticResource childViewConverter}}" />
                             <Button
                                 Grid.Column="6"
                                 Command="{Binding DataContext.DeleteEmployeeCommand, RelativeSource={RelativeSource AncestorType=Window, AncestorLevel=1}}"

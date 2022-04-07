@@ -53,7 +53,7 @@
                 Grid.Column="0"
                 Margin="10,0"
                 Background="Transparent"
-                ItemsSource="{Binding Employees}">
+                ItemsSource="{Binding Employees, Mode=TwoWay}">
                 <ie:Interaction.Triggers>
                     <ie:EventTrigger EventName="SelectionChanged">
                         <ie:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=employeelist, Path=SelectedItem}" />

@@ -84,7 +84,9 @@ namespace AdvantTest.Client.ViewModels
             {
                 var empId = Employees.IndexOf(Employees.Where(o => o.Id.Equals(SelectedEmployee.Id)).FirstOrDefault());
                 Employees[empId] = SelectedEmployee;
+                OnPropertyChanged(nameof(Employees));
             }
+            SelectedEmployee = new Employee { Birthdate=Timestamp.FromDateTime(DateTime.UtcNow)};
         }
 
         private async Task DeleteEmployee(object id)

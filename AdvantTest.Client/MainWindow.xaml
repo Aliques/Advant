@@ -2,79 +2,106 @@
     x:Class="AdvantTest.Client.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cmd="clr-namespace:AdvantTest.Client.Commands"
     xmlns:converters="clr-namespace:AdvantTest.Client.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="clr-namespace:AdvantTestTask.Grpc;assembly=AdvantTest.ClientLib"
+    xmlns:ie="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:AdvantTest.Client"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MainWindow"
-    Width="800"
+    Width="1024"
     Height="450"
     mc:Ignorable="d">
     <Window.Resources>
         <converters:EnumBooleanConverter x:Key="enumToBoleanConverter" />
+        <converters:GrpcDateConverter x:Key="grpcDateConverter" />
     </Window.Resources>
-    <Grid>
+    <Grid Grid.IsSharedSizeScope="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="400" />
         </Grid.ColumnDefinitions>
-        <ListBox
-            Grid.Column="0"
-            Margin="10,20"
-            Background="Transparent"
-            ItemsSource="{Binding EmployeeList}"
-            SelectedItem="{Binding SelectedEmployee}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MinWidth="100" />
-                            <ColumnDefinition MinWidth="100" />
-                            <ColumnDefinition MinWidth="100" />
-                            <ColumnDefinition MinWidth="55" />
-                            <ColumnDefinition MinWidth="50" />
-                            <ColumnDefinition MinWidth="50" />
-                            <ColumnDefinition MinWidth="50" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Grid.Column="0"
-                            Style="{StaticResource ListBoxItemCellStyle}"
-                            Text="{Binding FirstName}" />
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="5,0"
-                            Style="{StaticResource ListBoxItemCellStyle}"
-                            Text="{Binding Surname}" />
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="5,0"
-                            Style="{StaticResource ListBoxItemCellStyle}"
-                            Text="{Binding Patronymic}" />
-                        <TextBlock
-                            Grid.Column="3"
-                            Margin="5,0"
-                            Style="{StaticResource ListBoxItemCellStyle}"
-                            Text="{Binding BirthDate, StringFormat={}{0:dd.MM.yyyy}}" />
-                        <TextBlock
-                            Grid.Column="4"
-                            Margin="5,0"
-                            Style="{StaticResource ListBoxItemCellStyle}"
-                            Text="{Binding Gender}" />
-                        <TextBlock
-                            Grid.Column="5"
-                            Margin="5,0"
-                            Style="{StaticResource ListBoxItemCellStyle}"
-                            Text="{Binding HasChildren}" />
-                        <Button
-                            Grid.Column="6"
-                            Command="{Binding DataContext.DeleteEmployeeCommand, RelativeSource={RelativeSource AncestorType=Window, AncestorLevel=1}}"
-                            CommandParameter="{Binding Id}"
-                            Content="{Binding Id}" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="10,10,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MinWidth="100" SharedSizeGroup="nameCol" />
+                    <ColumnDefinition MinWidth="100" SharedSizeGroup="surnameCol" />
+                    <ColumnDefinition MinWidth="100" SharedSizeGroup="patrCol" />
+                    <ColumnDefinition MinWidth="55" SharedSizeGroup="birthDCol" />
+                    <ColumnDefinition MinWidth="50" SharedSizeGroup="genderCol" />
+                    <ColumnDefinition MinWidth="50" SharedSizeGroup="childCol" />
+                    <ColumnDefinition MinWidth="50" SharedSizeGroup="actionsCol" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Имя" />
+                <Label Grid.Column="1" Content="Фамилия" />
+                <Label Grid.Column="2" Content="Отчество" />
+                <Label Grid.Column="3" Content="Дата рождения" />
+                <Label Grid.Column="4" Content="Пол" />
+                <Label Grid.Column="5" Content="Дети" />
+            </Grid>
+            <ListBox
+                Name="employeelist"
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="10,0"
+                Background="Transparent"
+                ItemsSource="{Binding Employees}">
+                <ie:Interaction.Triggers>
+                    <ie:EventTrigger EventName="SelectionChanged">
+                        <ie:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=employeelist, Path=SelectedItem}" />
+                    </ie:EventTrigger>
+                </ie:Interaction.Triggers>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="nameCol" />
+                                <ColumnDefinition SharedSizeGroup="surnameCol" />
+                                <ColumnDefinition SharedSizeGroup="patrCol" />
+                                <ColumnDefinition SharedSizeGroup="birthDCol" />
+                                <ColumnDefinition SharedSizeGroup="genderCol" />
+                                <ColumnDefinition SharedSizeGroup="childCol" />
+                                <ColumnDefinition SharedSizeGroup="actionsCol" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="5,0"
+                                Text="{Binding Surname}" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="5,0"
+                                Text="{Binding Patronymic}" />
+                            <TextBlock
+                                Grid.Column="3"
+                                Margin="5,0"
+                                Text="{Binding Birthdate, Converter={StaticResource grpcDateConverter}, StringFormat={}{0:dd.MM.yyyy}}" />
+                            <TextBlock
+                                Grid.Column="4"
+                                Margin="5,0"
+                                Text="{Binding Gender}" />
+                            <TextBlock
+                                Grid.Column="5"
+                                Margin="5,0"
+                                Text="{Binding IsHaveChild}" />
+                            <Button
+                                Grid.Column="6"
+                                Command="{Binding DataContext.DeleteEmployeeCommand, RelativeSource={RelativeSource AncestorType=Window, AncestorLevel=1}}"
+                                CommandParameter="{Binding Id}"
+                                Content="Удалить" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
         <Grid Grid.Column="1">
             <StackPanel x:Name="inputsContainer" Margin="10,20">
                 <Grid Margin="0,0,0,10">
@@ -87,7 +114,7 @@
                         Grid.Column="1"
                         MinWidth="200"
                         HorizontalAlignment="Right"
-                        Text="{Binding CurrentFormEmployee.Name}" />
+                        Text="{Binding SelectedEmployee.Name}" />
                 </Grid>
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
@@ -99,7 +126,7 @@
                         Grid.Column="1"
                         MinWidth="200"
                         HorizontalAlignment="Right"
-                        Text="{Binding CurrentFormEmployee.Surname}" />
+                        Text="{Binding SelectedEmployee.Surname}" />
                 </Grid>
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
@@ -111,7 +138,7 @@
                         Grid.Column="1"
                         MinWidth="200"
                         HorizontalAlignment="Right"
-                        Text="{Binding CurrentFormEmployee.Patronymic}" />
+                        Text="{Binding SelectedEmployee.Patronymic}" />
                 </Grid>
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
@@ -123,7 +150,7 @@
                         Grid.Column="1"
                         MinWidth="200"
                         HorizontalAlignment="Right"
-                        SelectedDate="{Binding CurrentFormEmployee.Birthdate}" />
+                        SelectedDate="{Binding SelectedEmployee.Birthdate, Mode=TwoWay, Converter={StaticResource grpcDateConverter}}" />
                 </Grid>
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
@@ -140,19 +167,19 @@
                         <RadioButton
                             VerticalContentAlignment="Center"
                             GroupName="Gender"
-                            IsChecked="{Binding CurrentFormEmployee.Gender, Converter={StaticResource enumToBoleanConverter}, ConverterParameter={x:Static data:Gender.Male}}" />
+                            IsChecked="{Binding SelectedEmployee.Gender, Converter={StaticResource enumToBoleanConverter}, ConverterParameter={x:Static data:Gender.Male}}" />
                         <StackPanel Width="30" />
                         <Label Content="Ж" />
                         <RadioButton
                             VerticalContentAlignment="Center"
                             GroupName="Gender"
-                            IsChecked="{Binding CurrentFormEmployee.Gender, Converter={StaticResource enumToBoleanConverter}, ConverterParameter={x:Static data:Gender.Famale}}" />
+                            IsChecked="{Binding SelectedEmployee.Gender, Converter={StaticResource enumToBoleanConverter}, ConverterParameter={x:Static data:Gender.Famale}}" />
                         <StackPanel Width="30" />
                         <Label Content="None" />
                         <RadioButton
                             VerticalContentAlignment="Center"
                             GroupName="Gender"
-                            IsChecked="{Binding CurrentFormEmployee.Gender, Converter={StaticResource enumToBoleanConverter}, ConverterParameter={x:Static data:Gender.None}}" />
+                            IsChecked="{Binding SelectedEmployee.Gender, Converter={StaticResource enumToBoleanConverter}, ConverterParameter={x:Static data:Gender.None}}" />
 
                     </StackPanel>
                 </Grid>
@@ -166,7 +193,7 @@
                         Grid.Column="1"
                         Width="200"
                         HorizontalAlignment="Right">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding CurrentFormEmployee.IsHaveChild}" />
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding SelectedEmployee.IsHaveChild}" />
                     </Grid>
                 </Grid>
                 <StackPanel Orientation="Horizontal">
@@ -174,7 +201,7 @@
                         Width="80"
                         Height="30"
                         HorizontalAlignment="Right"
-                        Command="{Binding UpdateCommand}"
+                        Command="{Binding UpdateEmployeeCommand}"
                         Content="Изменить" />
                     <Button
                         Width="80"
@@ -182,7 +209,11 @@
                         Margin="20"
                         HorizontalAlignment="Right"
                         Command="{Binding CreateEmployeeCommand}"
-                        Content="Создать" />
+                        Content="Создать">
+                        <!--<Button.Command>
+                            <cmd:CreateEmployeeCommand />
+                        </Button.Command>-->
+                    </Button>
                 </StackPanel>
 
             </StackPanel>

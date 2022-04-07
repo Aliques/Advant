@@ -32,6 +32,7 @@ namespace AdvantTest.Client
         {
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainViewModel>();
+
             services.AddTransient<IEmployeeServices>(s => new EmployeeService(_configuration));
         }
 

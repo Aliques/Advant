@@ -18,6 +18,7 @@ namespace AdvantTest.Client.Services
         {
             _configuration = configuration;
             _channel = CreateGrpcChannel();
+            _client = CreateEmployeesClient();
         }
 
         public async Task<AddEmployeeReply> Create(EmployeeForCreation employee)
@@ -54,6 +55,10 @@ namespace AdvantTest.Client.Services
         private GrpcChannel CreateGrpcChannel()
         {
             return GrpcChannel.ForAddress(_configuration.GetSection("ServerEndpoint").Value);
+        }
+        private Employees.EmployeesClient CreateEmployeesClient()
+        {
+            return new Employees.EmployeesClient(_channel);
         }
     }
 }
